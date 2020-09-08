@@ -133,6 +133,6 @@ export default function DragEnd(type, spec, collect) {
       type,
       finalSpec,
       collect
-    )(hoistStatics(DragEndComp, WrappedComponent));
+    )(hoistStatics(DragEndComp as any, WrappedComponent));
   };
 }
