@@ -9,11 +9,11 @@ export class LineProps {
 
   end = { x: 50, y: 50 };
 
-  color = "blue";
+  color? = "blue";
 
-  strokeWidth = 2;
+  strokeWidth? = 2;
 
-  radius = 2;
+  radius? = 2;
 }
 
 export const Line: React.FC<LineProps> = (props) => {

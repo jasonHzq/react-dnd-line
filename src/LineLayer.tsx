@@ -8,11 +8,11 @@ import * as ReactDOM from "react-dom";
 import { ContainerContext, BORDER_WIDTH } from "./utils";
 
 class LineLayerProps {
-  color = "blue";
+  color? = "blue";
 
-  strokeWidth = 2;
+  strokeWidth? = 2;
 
-  radius = 2;
+  radius? = 2;
 }
 
 export const LineLayer: React.FC<LineLayerProps> = (props) => {

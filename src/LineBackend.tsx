@@ -9,34 +9,16 @@ import * as hoistStatics from "hoist-non-react-statics";
 import { LineLayer } from "./LineLayer";
 import { LineProps, Line } from "./Line";
 import { ContainerContext } from "./utils";
-import { LineCorrd } from "./Point";
-
-// export default function lineBackend(Comp) {
-//   const wrappedComponentName = Comp.displayName || Comp.name || "Component";
-
-//   class BackendComp extends React.Component<any> {
-//     static displayName = `LineBackend(${wrappedComponentName})`;
-//     render() {
-//       return (
-//       );
-//     }
-//   }
-
-//   return (
-//     <DndProvider backend={HTML5Backend as any}>
-//       {hoistStatics(BackendComp, Comp)}
-//     </DndProvider>
-//   );
-// }
+import { LineCoord } from "./Point";
 
 export class LineBackendProps {
-  lines = [] as LineCorrd[];
+  lines = [] as LineCoord[];
 
-  color = "blue";
+  color? = "blue";
 
-  strokeWidth = 2;
+  strokeWidth? = 2;
 
-  radius = 2;
+  radius? = 2;
 }
 
 export const LineBackend: React.FC<LineBackendProps> = (props) => {
@@ -61,7 +43,7 @@ export const LineBackend: React.FC<LineBackendProps> = (props) => {
           {props.children}
           <div
             className="line-overlay-target"
-            style={{ position: "absolute", left: 0, top: 0 }}
+            style={{ position: "absolute", left: 0, top: 0, zIndex: 9999 }}
           >
             <LineLayer {...restProps} />
             {props.lines.map((lineProps, index) => {

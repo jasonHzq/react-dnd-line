@@ -10,37 +10,31 @@ export enum DragDropType {
   Both = "both",
 }
 
-export class Corrd {
+export class Coord {
   x = 0;
   y = 0;
 }
 
-export class LineCorrd {
-  begin = new Corrd();
+export class LineCoord {
+  begin = new Coord();
 
-  end = new Corrd();
+  end = new Coord();
 }
 
 export class PointProps {
-  x = 0;
+  onDraw(line: LineCoord) {}
 
-  y = 0;
+  radius? = 14;
 
-  onDraw(line: LineCorrd) {}
-
-  radius = 14;
-
-  color = "blue";
+  color? = "blue";
 
   style?: React.CSSProperties;
 
-  hasDrawed?: boolean;
+  type = "Point";
 
-  type: string;
+  isDragSource? = true;
 
-  isDragSource = true;
-
-  isDropTarget = true;
+  isDropTarget? = true;
 }
 
 function identity<T>(el: T): T {
