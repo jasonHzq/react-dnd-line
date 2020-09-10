@@ -46,7 +46,7 @@ export const LineBackend: React.FC<LineBackendProps> = (props) => {
           {props.children}
           <div
             className="line-overlay-target"
-            style={{ position: "absolute", left: 0, top: 0, zIndex: 9999 }}
+            style={{ position: "absolute", left: 0, top: 0 }}
           >
             <LineLayer {...restProps} />
             {props.lines.map((lineProps, index) => {
