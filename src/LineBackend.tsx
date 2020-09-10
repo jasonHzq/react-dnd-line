@@ -29,11 +29,14 @@ export const LineBackend: React.FC<LineBackendProps> = (props) => {
   });
   React.useEffect(() => {
     const rect = ref.current?.getBoundingClientRect();
-    changeBox({
-      left: rect.left,
-      top: rect.top,
-    });
-  }, []);
+
+    if (rect.left !== containerBox.left || rect.top !== containerBox.top) {
+      changeBox({
+        left: rect.left,
+        top: rect.top,
+      });
+    }
+  });
   const { lines, ...restProps } = props;
 
   return (
