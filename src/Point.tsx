@@ -30,7 +30,7 @@ export class PointProps {
 
   style?: React.CSSProperties;
 
-  type = "Point";
+  type? = "Point";
 
   isDragSource? = true;
 
