@@ -1,5 +1,4 @@
-import Point, { getPoint } from "./Point";
-import DragEnd from "./DragEnd";
+import { Point } from "./Point";
 import { LineBackend } from "./LineBackend";
 
-export { DragEnd, LineBackend, getPoint, Point };
+export { LineBackend, Point };

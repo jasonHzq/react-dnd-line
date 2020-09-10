@@ -16,15 +16,12 @@ $ npm i -S react-dnd-line
 ```jsx
 import { Point, LineBackend, getPoint } from "react-dnd-line";
 
-const SourcePoint = getPoint({ sourceType: "Point" });
-const TargetPoint = getPoint({ targetType: "Point" });
-
 class App extends Component {
   render() {
     return (
-      <LineBackend>
-        <SourcePoint />
-        <TargetPoint />
+      <LineBackend lines={lines}>
+        <Point type="point" onDraw={(line) => {}} />
+        <Point type="point" onDraw={(line) => {}} />
       </LineBackend>
     );
   }

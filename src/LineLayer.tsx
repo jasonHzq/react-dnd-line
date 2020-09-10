@@ -1,78 +1,48 @@
+/**
+ * 拖拽时画的线
+ */
 import * as React from "react";
-import { DragLayer } from "react-dnd";
+import { DragLayer, useDragLayer } from "react-dnd";
 import { Line } from "./Line";
 import * as ReactDOM from "react-dom";
+import { ContainerContext, BORDER_WIDTH } from "./utils";
 
 class LineLayerProps {
-  item?: any;
+  color = "blue";
 
-  itemType?: string;
+  strokeWidth = 2;
 
-  isDragging?: boolean;
-
-  currentOffset?: any;
+  radius = 2;
 }
 
-const collect = (monitor: any, props): any => {
-  return {
-    item: monitor.getItem(),
-    itemType: monitor.getItemType(),
-    currentOffset: monitor.getSourceClientOffset(),
-    isDragging: monitor.isDragging(),
-  } as any;
+export const LineLayer: React.FC<LineLayerProps> = (props) => {
+  const { item, itemType, isDragging, currentOffset } = useDragLayer(
+    (monitor) => {
+      return {
+        item: monitor.getItem(),
+        itemType: monitor.getItemType(),
+        currentOffset: monitor.getSourceClientOffset(),
+        isDragging: monitor.isDragging(),
+      };
+    }
+  );
+  const containerBox = React.useContext(ContainerContext);
+  console.log("containerBox", containerBox);
+  if (!item || !currentOffset || !isDragging) {
+    return <div></div>;
+  }
+
+  const { width, height, left, top } = item;
+  const begin = {
+    x: left + width / 2 + BORDER_WIDTH,
+    y: top + height / 2 + BORDER_WIDTH,
+  };
+  const end = {
+    x: currentOffset.x - containerBox.left + width / 2 + BORDER_WIDTH,
+    y: currentOffset.y - containerBox.top + height / 2 + BORDER_WIDTH,
+  };
+
+  return <Line begin={begin} end={end} {...props} />;
 };
 
-class LineLayerComp extends React.Component<LineLayerProps> {
-  overlayTarget = null as HTMLDivElement;
-
-  renderOverlay() {
-    if (!this.overlayTarget) {
-      this.overlayTarget = document.createElement("div");
-
-      document.body.appendChild(this.overlayTarget);
-    }
-
-    const { item, itemType, isDragging, currentOffset } = this.props;
-
-    if (!item || !currentOffset || !isDragging) {
-      ReactDOM.render(<div></div>, this.overlayTarget);
-      return;
-    }
-
-    const { width, height, left, top, line } = item;
-    const begin = {
-      x: left + width / 2,
-      y: top + height / 2,
-    };
-    const end = {
-      x: currentOffset.x + width / 2 + document.body.scrollLeft,
-      y: currentOffset.y + height / 2 + document.body.scrollTop,
-    };
-
-    ReactDOM.render(
-      <Line begin={begin} end={end} {...line} />,
-      this.overlayTarget
-    );
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    this.renderOverlay();
-  }
-
-  componentWillUnmount() {
-    if (this.overlayTarget) {
-      document.body.removeChild(this.overlayTarget);
-      this.overlayTarget = null;
-    }
-  }
-
-  componentDidMount() {
-    this.renderOverlay();
-  }
-
-  render() {
-    return null;
-  }
-}
-
-export const LineLayer = DragLayer(collect)(LineLayerComp);
+LineLayer.defaultProps = new LineLayerProps();

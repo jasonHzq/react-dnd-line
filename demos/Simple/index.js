@@ -2,9 +2,6 @@ import React, { Component } from "react";
 import { Point, getPoint, LineBackend } from "react-dnd-line";
 import ReactDOM from "react-dom";
 
-const SourcePoint = getPoint({ sourceType: "Point" });
-const TargetPoint = getPoint({ targetType: "Point" });
-
 function repeat(target, repeatNum) {
   if (!repeatNum) {
     return [];
@@ -31,10 +28,15 @@ class App extends Component {
         y: toInt(Math.random() * MAX),
       };
     }),
+    lines: [],
+    shouldShowPoints: true,
   };
 
-  handleDraw(point, origin) {
-    console.log(point, origin);
+  handleDraw(line) {
+    console.log(line);
+    this.setState({
+      lines: [...this.state.lines, line],
+    });
   }
 
   componentDidCatch(error) {
@@ -45,21 +47,25 @@ class App extends Component {
     const points = this.state.points.map((point, pointIndex) => {
       return (
         <div key={pointIndex}>
-          <SourcePoint
+          <Point
             key={`point-source-${pointIndex}`}
             color="red"
+            type="point"
+            isDropTarget={false}
             line={{ color: "red" }}
-            onDraw={this.handleDraw.bind(this, point)}
+            onDraw={this.handleDraw.bind(this)}
             style={{
               left: point.x + 20,
               top: point.y + 20,
             }}
           />
-          <TargetPoint
+          <Point
             key={`point-target-${pointIndex}`}
             color="green"
+            isDragSource={false}
+            type="point"
             line={{ color: "green" }}
-            onDraw={this.handleDraw.bind(this, point)}
+            onDraw={this.handleDraw.bind(this)}
             style={{
               left: point.x,
               top: point.y,
@@ -70,20 +76,35 @@ class App extends Component {
     });
 
     return (
-      <LineBackend>
-        <div style={{ position: "relative", left: 200 }}>
-          <Point
-            color="yellow"
-            line={{ color: "yellow" }}
-            onDraw={this.handleDraw.bind(this, { x: 20, y: 20 })}
-            style={{
-              left: 20,
-              top: 20,
-            }}
-          />
-          {points}
-        </div>
-      </LineBackend>
+      <div>
+        <button
+          onClick={() => {
+            this.setState({
+              shouldShowPoints: !this.state.shouldShowPoints,
+            });
+          }}
+        >
+          click me
+        </button>
+
+        {this.state.shouldShowPoints ? (
+          <div style={{ position: "relative", left: 200, width: 400 }}>
+            <LineBackend lines={this.state.lines}>
+              <Point
+                color="yellow"
+                line={{ color: "yellow" }}
+                type="point"
+                onDraw={this.handleDraw.bind(this)}
+                style={{
+                  left: 20,
+                  top: 20,
+                }}
+              />
+              {points}
+            </LineBackend>
+          </div>
+        ) : null}
+      </div>
     );
   }
 }

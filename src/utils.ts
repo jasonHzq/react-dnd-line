@@ -1,3 +1,5 @@
+import * as React from "react";
+
 export function getDOMRect(dom: HTMLDivElement) {
   const rect = dom.getBoundingClientRect();
 
@@ -8,3 +10,10 @@ export function getDOMRect(dom: HTMLDivElement) {
     top: rect.top + document.body.scrollTop,
   };
 }
+
+export const ContainerContext = React.createContext({
+  left: 0,
+  top: 0,
+});
+
+export const BORDER_WIDTH = 1;
