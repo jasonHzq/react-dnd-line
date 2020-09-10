@@ -33,7 +33,7 @@ export const LineBackend: React.FC<LineBackendProps> = (props) => {
       left: rect.left,
       top: rect.top,
     });
-  });
+  }, []);
   const { lines, ...restProps } = props;
 
   return (
