@@ -8,11 +8,11 @@ import { DndProvider } from "react-dnd";
 import * as hoistStatics from "hoist-non-react-statics";
 import { LineLayer } from "./LineLayer";
 import { LineProps, Line } from "./Line";
-import { ContainerContext } from "./utils";
+import { getLines, getDOMRect, Rect, getDiffRect } from "./utils";
 import { LineCoord } from "./Point";
 
 export class LineBackendProps {
-  lines = [] as LineCoord[];
+  lines = [] as Array<[string, string]>;
 
   color? = "blue";
 
@@ -23,40 +23,71 @@ export class LineBackendProps {
 
 export const LineBackend: React.FC<LineBackendProps> = (props) => {
   const ref = React.useRef<HTMLDivElement>();
-  const [containerBox, changeBox] = React.useState({
-    left: 0,
-    top: 0,
-  });
-  React.useEffect(() => {
-    const rect = ref.current?.getBoundingClientRect();
-
-    if (rect.left !== containerBox.left || rect.top !== containerBox.top) {
-      changeBox({
-        left: rect.left,
-        top: rect.top,
-      });
-    }
-  });
   const { lines, ...restProps } = props;
+  const [points, changePoints] = React.useState([]);
+
+  React.useEffect(() => {
+    const rect = getDOMRect(ref?.current);
+    const pointDOMs = ref.current?.querySelectorAll(".react-dnd-line-point");
+    const points = Array.from(pointDOMs || []).map(
+      (pointDOM: HTMLDivElement) => {
+        return {
+          ...getDiffRect(getDOMRect(pointDOM), rect),
+          value: pointDOM?.dataset?.value || "",
+        };
+      }
+    );
+    changePoints(points);
+  }, [props.lines]);
 
   return (
     <DndProvider backend={HTML5Backend as any}>
-      <ContainerContext.Provider value={containerBox}>
-        <div style={{ position: "relative" }} ref={ref}>
-          {props.children}
-          <div
-            className="line-overlay-target"
-            style={{ position: "absolute", left: 0, top: 0 }}
-          >
-            <LineLayer {...restProps} />
-            {props.lines.map((lineProps, index) => {
-              return <Line key={index} {...lineProps} {...restProps} />;
-            })}
-          </div>
+      <div style={{ position: "relative" }} ref={ref}>
+        {props.children}
+        <div
+          className="line-overlay-target"
+          style={{ position: "absolute", left: 0, top: 0 }}
+        >
+          <LineLayer
+            points={points}
+            width={16}
+            height={16}
+            getDOMRect={() => getDOMRect(ref.current)}
+            {...restProps}
+          />
+          <Lines points={points} {...props} />
         </div>
-      </ContainerContext.Provider>
+      </div>
     </DndProvider>
   );
 };
 
 LineBackend.defaultProps = new LineBackendProps();
+
+export class LinesProps {
+  lines = [] as Array<[string, string]>;
+
+  color? = "blue";
+
+  strokeWidth? = 2;
+
+  radius? = 2;
+
+  points = [] as Rect[];
+}
+
+export const Lines: React.FC<LinesProps> = (props) => {
+  const { lines, points, ...restProps } = props;
+
+  return (
+    <>
+      {lines.map((line, index) => {
+        const lineProps = getLines(line, points);
+
+        return <Line key={index} {...lineProps} {...restProps} />;
+      })}
+    </>
+  );
+};
+
+Lines.defaultProps = new LinesProps();

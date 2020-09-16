@@ -48,7 +48,7 @@ class App extends Component {
       return (
         <div key={pointIndex}>
           <Point
-            key={`point-source-${pointIndex}`}
+            value={`point-source-${pointIndex}`}
             color="red"
             type="point"
             isDropTarget={false}
@@ -60,7 +60,7 @@ class App extends Component {
             }}
           />
           <Point
-            key={`point-target-${pointIndex}`}
+            value={`point-target-${pointIndex}`}
             color="green"
             isDragSource={false}
             type="point"
@@ -89,19 +89,7 @@ class App extends Component {
 
         {this.state.shouldShowPoints ? (
           <div style={{ position: "relative", left: 200, width: 400 }}>
-            <LineBackend lines={this.state.lines}>
-              <Point
-                color="yellow"
-                line={{ color: "yellow" }}
-                type="point"
-                onDraw={this.handleDraw.bind(this)}
-                style={{
-                  left: 20,
-                  top: 20,
-                }}
-              />
-              {points}
-            </LineBackend>
+            <LineBackend lines={this.state.lines}>{points}</LineBackend>
           </div>
         ) : null}
       </div>

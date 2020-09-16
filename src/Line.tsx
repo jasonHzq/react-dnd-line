@@ -5,9 +5,9 @@
 import * as React from "react";
 
 export class LineProps {
-  begin = { x: 0, y: 0 };
+  begin? = { x: 0, y: 0 };
 
-  end = { x: 50, y: 50 };
+  end? = { x: 50, y: 50 };
 
   color? = "blue";
 

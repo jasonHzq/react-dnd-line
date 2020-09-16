@@ -2,7 +2,7 @@ import * as React from "react";
 import { DragSource, DragSourceSpec, useDrag, useDrop } from "react-dnd";
 import { getEmptyImage } from "react-dnd-html5-backend";
 import { findDOMNode } from "react-dom";
-import { getDOMRect, ContainerContext, BORDER_WIDTH } from "./utils";
+import { getDOMRect, BORDER_WIDTH } from "./utils";
 
 export enum DragDropType {
   DragSource = "dragSource",
@@ -22,7 +22,7 @@ export class LineCoord {
 }
 
 export class PointProps {
-  onDraw(line: LineCoord) {}
+  onDraw(relation?: [string, string]) {}
 
   radius? = 14;
 
@@ -35,6 +35,8 @@ export class PointProps {
   isDragSource? = true;
 
   isDropTarget? = true;
+
+  value: string;
 }
 
 function identity<T>(el: T): T {
@@ -44,9 +46,7 @@ function identity<T>(el: T): T {
 export const Point: React.FC<PointProps> = (props) => {
   const [status, changeStatus] = React.useState("none");
   const [hasDrawed, changeHasDrawed] = React.useState(false);
-  const containerBox = React.useContext(ContainerContext);
   const dom = React.useRef<HTMLDivElement>();
-  const rect = dom?.current?.getBoundingClientRect();
 
   const [
     { isDragging, didDrop, canDrag },
@@ -55,18 +55,7 @@ export const Point: React.FC<PointProps> = (props) => {
   ] = useDrag({
     item: { type: props.type } as any,
     begin: (monitor) => {
-      const position = {
-        left: rect.left - containerBox.left,
-        top: rect.top - containerBox.top,
-      };
-      console.log(position);
-
-      return {
-        ...props,
-        ...position,
-        width: props.radius,
-        height: props.radius,
-      };
+      return props;
     },
     end: (item, monitor) => {
       return {
@@ -84,7 +73,7 @@ export const Point: React.FC<PointProps> = (props) => {
   });
 
   const [{ isOver }, connectDropTarget] = useDrop<
-    { left: number; top: number; type: string },
+    { type: string; value: string },
     any,
     any
   >({
@@ -100,35 +89,16 @@ export const Point: React.FC<PointProps> = (props) => {
     drop: (item, monitor) => {
       changeHasDrawed(true);
       // 回调
-      props.onDraw &&
-        props.onDraw({
-          begin: {
-            x: item.left + props.radius / 2 + BORDER_WIDTH,
-            y: item.top + props.radius / 2 + BORDER_WIDTH,
-          },
-          end: {
-            x:
-              (rect?.left || 0) -
-              containerBox.left +
-              props.radius / 2 +
-              BORDER_WIDTH,
-            y:
-              (rect?.top || 0) -
-              containerBox.top +
-              props.radius / 2 +
-              BORDER_WIDTH,
-          },
-        });
+      props.onDraw && props.onDraw([item.value, props.value]);
     },
   });
 
+  const { radius, color, style: propStyle = {} } = props;
   React.useEffect(() => {
     connectDragPreview(getEmptyImage(), {
       captureDraggingState: true,
     });
   });
-
-  const { radius, color, style: propStyle = {} } = props;
 
   const style = {
     position: "absolute",
@@ -168,7 +138,8 @@ export const Point: React.FC<PointProps> = (props) => {
       <div
         style={style}
         ref={dom}
-        className="point"
+        data-value={props.value}
+        className="point react-dnd-line-point"
         onMouseEnter={() => changeStatus("hover")}
         onMouseLeave={() => changeStatus("none")}
       >
