@@ -1,6 +1,3 @@
-import * as React from "react";
-import { createContainer } from "unstated-next";
-
 export function getDOMRect(dom: HTMLDivElement) {
   if (!dom) {
     return {
@@ -63,5 +60,20 @@ export const getLines = ([begin, end]: [string, string], points: Rect[]) => {
     end: getPosition(end, points),
   };
 };
+
+export function debounce(func: (...rest) => void, wait: number) {
+  let timeout: number;
+
+  return function () {
+    const context = this;
+    const args = arguments;
+
+    if (timeout) clearTimeout(timeout);
+
+    timeout = setTimeout(function () {
+      func.apply(context, args);
+    }, wait);
+  };
+}
 
 export const BORDER_WIDTH = 1;
