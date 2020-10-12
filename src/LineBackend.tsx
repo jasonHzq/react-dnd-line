@@ -19,10 +19,21 @@ export class LineBackendProps {
   radius? = 2;
 }
 
+function usePrevious<T>(value: T) {
+  const ref = React.useRef<T>();
+
+  React.useEffect(() => {
+    ref.current = value;
+  });
+
+  return ref.current;
+}
+
 export const LineBackend: React.FC<LineBackendProps> = (props) => {
   const ref = React.useRef<HTMLDivElement>();
   const { lines, ...restProps } = props;
   const [points, changePoints] = React.useState([]);
+  const previousLines = usePrevious(props.lines);
 
   const updatePoints = () => {
     const rect = getDOMRect(ref?.current);
@@ -39,6 +50,18 @@ export const LineBackend: React.FC<LineBackendProps> = (props) => {
   };
 
   React.useEffect(() => {
+    if (
+      previousLines?.length &&
+      previousLines?.length === lines?.length &&
+      previousLines.every((line, lineIndex) => {
+        const currLine = lines[lineIndex];
+
+        return currLine[0] === line[0] && currLine[1] === line[1];
+      })
+    ) {
+      return;
+    }
+
     updatePoints();
   }, [props.lines]);
 
