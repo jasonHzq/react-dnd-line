@@ -17,7 +17,7 @@ export class LineProps {
 }
 
 export const Line: React.FC<LineProps> = (props) => {
-  const { begin, end, radius, color, ...rest } = props;
+  const { begin, end, radius, color, strokeWidth, ...rest } = props;
   const { x: x1, y: y1 } = begin;
   const { x: x2, y: y2 } = end;
 
@@ -44,6 +44,7 @@ export const Line: React.FC<LineProps> = (props) => {
         x2={x2 - left}
         y2={y2 - top}
         stroke={color}
+        strokeWidth={strokeWidth}
         // {...rest}
       />
       <circle cx={x2 - left} cy={y2 - top} r={radius} fill={color} />
