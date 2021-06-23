@@ -37,6 +37,9 @@ export class PointProps {
   isDropTarget? = true;
 
   value: string;
+
+  onMouseEnter? = () => {};
+  onMouseLeave? = () => {};
 }
 
 function identity<T>(el: T): T {
@@ -140,8 +143,14 @@ export const Point: React.FC<PointProps> = (props) => {
         ref={dom}
         data-value={props.value}
         className="point react-dnd-line-point"
-        onMouseEnter={() => changeStatus("hover")}
-        onMouseLeave={() => changeStatus("none")}
+        onMouseEnter={() => {
+          changeStatus("hover");
+          props.onMouseEnter();
+        }}
+        onMouseLeave={() => {
+          changeStatus("none");
+          props.onMouseLeave();
+        }}
       >
         {children}
       </div>

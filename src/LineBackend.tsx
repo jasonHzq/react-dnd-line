@@ -5,8 +5,9 @@
 import * as React from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { Line } from "./Line";
+import { LineProps } from "./Line";
 import { LineLayer } from "./LineLayer";
+import { Lines } from "./Lines";
 import { debounce, getDiffRect, getDOMRect, getLines, Rect } from "./utils";
 
 export class LineBackendProps {
@@ -17,6 +18,10 @@ export class LineBackendProps {
   strokeWidth? = 2;
 
   radius? = 2;
+
+  getLineProps? = (line: [string, string]): LineProps => {
+    return {};
+  };
 }
 
 function usePrevious<T>(value: T) {
@@ -103,31 +108,3 @@ export const LineBackend: React.FC<LineBackendProps> = (props) => {
 };
 
 LineBackend.defaultProps = new LineBackendProps();
-
-export class LinesProps {
-  lines = [] as Array<[string, string]>;
-
-  color? = "blue";
-
-  strokeWidth? = 2;
-
-  radius? = 2;
-
-  points = [] as Rect[];
-}
-
-export const Lines: React.FC<LinesProps> = (props) => {
-  const { lines, points, ...restProps } = props;
-
-  return (
-    <>
-      {lines.map((line, index) => {
-        const lineProps = getLines(line, points);
-
-        return <Line key={index} {...lineProps} {...restProps} />;
-      })}
-    </>
-  );
-};
-
-Lines.defaultProps = new LinesProps();

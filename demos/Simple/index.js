@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Point, getPoint, LineBackend } from "react-dnd-line";
 import ReactDOM from "react-dom";
+import "./index.scss";
 
 function repeat(target, repeatNum) {
   if (!repeatNum) {
@@ -22,7 +23,7 @@ const MAX = 500;
 
 class App extends Component {
   state = {
-    points: repeat({}, 10).map((pos) => {
+    points: repeat({}, 80).map((pos) => {
       return {
         x: toInt(Math.random() * MAX),
         y: toInt(Math.random() * MAX),
@@ -30,6 +31,7 @@ class App extends Component {
     }),
     lines: [],
     shouldShowPoints: true,
+    hoveredPoint: null,
   };
 
   handleDraw(line) {
@@ -43,6 +45,13 @@ class App extends Component {
     console.error(error);
   }
 
+  getLineProps = (line) => {
+    if ((line || []).includes(this.state.hoveredPoint)) {
+      return { color: "red", stroke: "2px" };
+    }
+    return {};
+  };
+
   render() {
     const points = this.state.points.map((point, pointIndex) => {
       return (
@@ -53,6 +62,16 @@ class App extends Component {
             type="point"
             isDropTarget={false}
             line={{ color: "red" }}
+            onMouseEnter={() => {
+              this.setState({
+                hoveredPoint: `point-source-${pointIndex}`,
+              });
+            }}
+            onMouseLeave={() => {
+              this.setState({
+                hoveredPoint: null,
+              });
+            }}
             onDraw={this.handleDraw.bind(this)}
             style={{
               left: point.x + 20,
@@ -63,6 +82,16 @@ class App extends Component {
             value={`point-target-${pointIndex}`}
             color="green"
             isDragSource={false}
+            onMouseEnter={() => {
+              this.setState({
+                hoveredPoint: `point-target-${pointIndex}`,
+              });
+            }}
+            onMouseLeave={() => {
+              this.setState({
+                hoveredPoint: null,
+              });
+            }}
             type="point"
             line={{ color: "green" }}
             onDraw={this.handleDraw.bind(this)}
@@ -89,7 +118,12 @@ class App extends Component {
 
         {this.state.shouldShowPoints ? (
           <div style={{ position: "relative", left: 200, width: 400 }}>
-            <LineBackend lines={this.state.lines}>{points}</LineBackend>
+            <LineBackend
+              getLineProps={this.getLineProps}
+              lines={this.state.lines}
+            >
+              {points}
+            </LineBackend>
           </div>
         ) : null}
       </div>

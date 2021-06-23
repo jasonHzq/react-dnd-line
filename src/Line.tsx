@@ -44,7 +44,7 @@ export const Line: React.FC<LineProps> = (props) => {
         x2={x2 - left}
         y2={y2 - top}
         stroke={color}
-        {...rest}
+        // {...rest}
       />
       <circle cx={x2 - left} cy={y2 - top} r={radius} fill={color} />
     </svg>
